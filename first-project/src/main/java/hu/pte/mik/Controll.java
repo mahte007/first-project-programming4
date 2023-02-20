@@ -44,21 +44,18 @@ public class Controll {
     }
 
     private Client convertToClient(String[] strings) {
-        switch (strings[0]) {
-            case "P":
-                return new Person(this.id.getAndIncrement(), strings[1], strings[2], strings[3]);
-            case "C":
-                return new Company(this.id.getAndIncrement(), strings[1], strings[2], strings[3]);
-            default:
-                throw new RuntimeException("Unknown client type: " + strings);
-        }
+        return switch (strings[0]) {
+            case "P" -> new Person(this.id.getAndIncrement(), strings[1], strings[2], strings[3]);
+            case "C" -> new Company(this.id.getAndIncrement(), strings[1], strings[2], strings[3]);
+            default -> throw new RuntimeException("Unknown client type: " + strings);
+        };
     }
 
     private void callService(Client client) {
-        if (client instanceof Person) {
-            this.personService.pay((Person) client);
-        } else if (client instanceof Company) {
-            this.companyService.pay((Company) client);
+        if (client instanceof Person person) {
+            this.personService.pay(person);
+        } else if (client instanceof Company company) {
+            this.companyService.pay(company);
         } else {
             throw new RuntimeException("Unknown client type: " + client);
         }
