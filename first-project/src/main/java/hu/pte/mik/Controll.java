@@ -4,11 +4,11 @@ import hu.pte.mik.model.Client;
 import hu.pte.mik.model.Company;
 import hu.pte.mik.model.Person;
 import hu.pte.mik.service.CompanyService;
+import hu.pte.mik.service.IdProvider;
 import hu.pte.mik.service.PersonService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 public class Controll {
@@ -17,17 +17,15 @@ public class Controll {
 
     private final CompanyService companyService = new CompanyService();
     private final PersonService personService = new PersonService();
-    private final AtomicLong id = new AtomicLong(0L);
+    private final IdProvider idProvider = IdProvider.getInstance();
 
     public void start() {
         LOGGER.info("Hello world!");
-        List<String[]> list = this.createDummyList();
 
-        for (String[] strings : list) {
-            Client client = this.convertToClient(strings);
-
-            this.callService(client);
-        }
+        this.createDummyList()
+            .stream()
+            .map(this::convertToClient)
+            .forEach(client -> new Thread(() -> this.callService(client)).start());
     }
 
     private List<String[]> createDummyList() {
@@ -45,13 +43,18 @@ public class Controll {
 
     private Client convertToClient(String[] strings) {
         return switch (strings[0]) {
-            case "P" -> new Person(this.id.getAndIncrement(), strings[1], strings[2], strings[3]);
-            case "C" -> new Company(this.id.getAndIncrement(), strings[1], strings[2], strings[3]);
+            case "P" -> new Person(this.idProvider.nextId(), strings[1], strings[2], strings[3]);
+            case "C" -> new Company(this.idProvider.nextId(), strings[1], strings[2], strings[3]);
             default -> throw new RuntimeException("Unknown client type: " + strings);
         };
     }
 
     private void callService(Client client) {
+        try {
+            Thread.sleep((long) (Math.random() * 5000));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         if (client instanceof Person person) {
             this.personService.pay(person);
         } else if (client instanceof Company company) {
