@@ -1,11 +1,18 @@
 package hu.pte.mik.model;
 
+import hu.pte.mik.xml.XmlElement;
+import hu.pte.mik.xml.XmlSerializable;
+
 import java.util.Objects;
 
+@XmlSerializable
 public abstract class Client {
 
+    @XmlElement
     private Long id;
+    @XmlElement
     private String name;
+    @XmlElement
     private String address;
 
     public Client(Long id, String name, String address) {
@@ -45,9 +52,9 @@ public abstract class Client {
 
         Client client = (Client) o;
 
-        if (!Objects.equals(id, client.id)) return false;
-        if (!Objects.equals(name, client.name)) return false;
-        return Objects.equals(address, client.address);
+        if (!Objects.equals(this.id, client.id)) return false;
+        if (!Objects.equals(this.name, client.name)) return false;
+        return Objects.equals(this.address, client.address);
     }
 
     @Override
@@ -61,9 +68,9 @@ public abstract class Client {
     @Override
     public String toString() {
         return "Client{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
+                "id=" + this.id +
+                ", name='" + this.name + '\'' +
+                ", address='" + this.address + '\'' +
                 '}';
     }
 }

@@ -1,9 +1,12 @@
 package hu.pte.mik.model;
 
+import hu.pte.mik.xml.XmlElement;
+
 import java.util.Objects;
 
 public class Person extends Client {
 
+    @XmlElement
     private String idNumber;
 
     public Person(Long id, String name, String address, String idNumber) {
