@@ -39,12 +39,12 @@ public class PersonPaymentServlet extends HttpServlet {
 //        }
 
         String name = Optional.ofNullable(req.getCookies())
-                .map(Stream::of)
-                .orElse(Stream.empty())
-                .filter(cookie -> "name".equals(cookie.getName()))
-                .findFirst()
-                .map(cookie -> URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8))
-                .orElse(null);
+                              .map(Stream::of)
+                              .orElse(Stream.empty())
+                              .filter(cookie -> "name".equals(cookie.getName()))
+                              .findFirst()
+                              .map(cookie -> URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8))
+                              .orElse(null);
 
         createResponse(writer, name);
     }
@@ -68,12 +68,12 @@ public class PersonPaymentServlet extends HttpServlet {
         String name = req.getParameter("name");
         String address = req.getParameter("address");
         String idNumber = req.getParameter("idNumber");
-        Person person = new Person(idProvider.nextId(), name, address, idNumber);
+        Person person = new Person(this.idProvider.nextId(), name, address, idNumber);
 
         Cookie cookie = new Cookie("name", URLEncoder.encode(name, StandardCharsets.UTF_8));
         resp.addCookie(cookie);
 
         this.personService.pay(person);
-        createResponse(resp.getWriter(), name);
+        resp.sendRedirect("clientList");
     }
 }
